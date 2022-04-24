@@ -9,6 +9,8 @@ import { connectDb, disconnectDb } from './utils/database';
 
 import userRoutes from './modules/user/user.route';
 import authRoutes from './modules/auth/auth.route';
+import videoRoutes from './modules/video/video.route';
+
 import globalErrorHandler from './modules/error/error.controller';
 import deserializeUser from './middlewares/deserializeUser';
 
@@ -34,6 +36,7 @@ app.use(deserializeUser);
 // routes
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/videos', videoRoutes);
 
 app.use(globalErrorHandler);
 
