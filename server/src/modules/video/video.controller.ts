@@ -5,7 +5,7 @@ import { StatusCodes } from 'http-status-codes';
 import expressAsyncHandler from 'express-async-handler';
 import AppError from '../../utils/appError';
 import { Video } from './video.model';
-import { createVideo, findVideo } from './video.service';
+import { createVideo, findVideo, getVideos } from './video.service';
 import { UpdateVideoBody, UpdateVideoParams } from './video.schema';
 
 const MIME_TYPES = ['video/mp4'];
@@ -91,5 +91,14 @@ export const updateVideoHandler = expressAsyncHandler<
     res.status(StatusCodes.OK).json({
         message: 'Video updated successfully',
         data: video,
+    });
+});
+
+export const findVideosHandler = expressAsyncHandler(async (req, res, next) => {
+    const videos = await getVideos();
+
+    res.status(StatusCodes.OK).json({
+        message: 'Videos found successfully',
+        data: videos,
     });
 });
