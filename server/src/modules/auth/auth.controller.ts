@@ -14,7 +14,7 @@ export const loginHandler = expressAsyncHandler<{}, {}, LoginSchema>(
         // find the user by email
         const user = await findUserByEmail(email);
         // if user is not found, return error
-        if (!user || !user.comparePassword(password)) {
+        if (!user || !(await user.comparePassword(password))) {
             return next(
                 new AppError(
                     'Invalid email or password',

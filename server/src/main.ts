@@ -10,6 +10,7 @@ import { connectDb, disconnectDb } from './utils/database';
 import userRoutes from './modules/user/user.route';
 import authRoutes from './modules/auth/auth.route';
 import globalErrorHandler from './modules/error/error.controller';
+import deserializeUser from './middlewares/deserializeUser';
 
 require('dotenv').config();
 
@@ -29,6 +30,7 @@ app.use(helmet());
 
 app.use(morgan('dev'));
 
+app.use(deserializeUser);
 // routes
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/auth', authRoutes);
