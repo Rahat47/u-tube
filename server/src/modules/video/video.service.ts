@@ -16,5 +16,5 @@ export const getVideos = () =>
 // export const updateVideo = (videoId: string, body: any) =>
 //     VideoModel.findOneAndUpdate({ videoId }, body, { new: true });
 
-// export const deleteVideo = (videoId: string) =>
-//     VideoModel.findOneAndDelete({ videoId });
+export const deleteVideo = (videoId: Video['videoId']) =>
+    VideoModel.findOneAndDelete({ videoId });

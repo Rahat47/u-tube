@@ -5,8 +5,14 @@ import { StatusCodes } from 'http-status-codes';
 import expressAsyncHandler from 'express-async-handler';
 import AppError from '../../utils/appError';
 import { Video } from './video.model';
-import { createVideo, findVideo, getVideos } from './video.service';
+import {
+    createVideo,
+    deleteVideo,
+    findVideo,
+    getVideos,
+} from './video.service';
 import { UpdateVideoBody, UpdateVideoParams } from './video.schema';
+import logger from '../../utils/logger';
 
 const MIME_TYPES = ['video/mp4'];
 
@@ -27,6 +33,7 @@ export const uploadVideoHandler: RequestHandler = async (req, res, next) => {
 
     bb.on('file', async (_, file, info) => {
         if (!MIME_TYPES.includes(info.mimeType)) {
+            await deleteVideo(video.videoId);
             return next(
                 new AppError('Invalid file type', StatusCodes.BAD_REQUEST)
             );
@@ -53,6 +60,16 @@ export const uploadVideoHandler: RequestHandler = async (req, res, next) => {
         res.write(JSON.stringify(video));
 
         res.end();
+    });
+
+    bb.on('error', async () => {
+        await deleteVideo(video.videoId);
+        return next(
+            new AppError(
+                'Error uploading video',
+                StatusCodes.INTERNAL_SERVER_ERROR
+            )
+        );
     });
 
     return req.pipe(bb);
@@ -102,3 +119,51 @@ export const findVideosHandler = expressAsyncHandler(async (req, res, next) => {
         data: videos,
     });
 });
+
+export const deleteVideoHandler = expressAsyncHandler<UpdateVideoParams>(
+    async (req, res, next) => {
+        const { videoId } = req.params;
+        const { _id: userId } = res.locals.user;
+
+        const video = await findVideo(videoId);
+
+        if (!video) {
+            return next(new AppError('Video not found', StatusCodes.NOT_FOUND));
+        }
+
+        if (video.owner!.toString() !== userId) {
+            return next(
+                new AppError(
+                    'You are not authorized to delete this video',
+                    StatusCodes.UNAUTHORIZED
+                )
+            );
+        }
+        // delete the video from the file system
+        const filePath = getPath({
+            videoId: video.videoId,
+            extension: video.extension,
+        });
+
+        fs.unlink(filePath, async (err) => {
+            if (err) {
+                logger.error(err);
+                return next(
+                    new AppError(
+                        'Error deleting video',
+                        StatusCodes.INTERNAL_SERVER_ERROR
+                    )
+                );
+            }
+
+            // delete the video from the database
+            await deleteVideo(video.videoId);
+            logger.info('Video deleted successfully');
+
+            res.status(StatusCodes.OK).json({
+                message: 'Video deleted successfully',
+                data: null,
+            });
+        });
+    }
+);
