@@ -2,7 +2,7 @@ import fs from 'fs-extra';
 import busboy from 'busboy';
 import { RequestHandler } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import expressAsyncHandler from 'express-async-handler';
+import asyncHandler from 'express-async-handler';
 import AppError from '../../utils/appError';
 import { Video } from './video.model';
 import {
@@ -15,6 +15,7 @@ import { UpdateVideoBody, UpdateVideoParams } from './video.schema';
 import logger from '../../utils/logger';
 
 const MIME_TYPES = ['video/mp4'];
+const CHUNK_SIZE = 1000000; // 1MB
 
 const getPath = ({
     videoId,
@@ -75,7 +76,52 @@ export const uploadVideoHandler: RequestHandler = async (req, res, next) => {
     return req.pipe(bb);
 };
 
-export const updateVideoHandler = expressAsyncHandler<
+export const streamVideoHandler: RequestHandler = async (req, res, next) => {
+    const { videoId } = req.params;
+
+    const { range } = req.headers;
+    if (!range) {
+        return next(
+            new AppError('Range header is required', StatusCodes.BAD_REQUEST)
+        );
+    }
+
+    const video = await findVideo(videoId);
+
+    if (!video) {
+        return next(new AppError('Video not found', StatusCodes.NOT_FOUND));
+    }
+
+    const filePath = getPath({
+        videoId,
+        extension: video.extension,
+    });
+
+    const fileSize = fs.statSync(filePath).size;
+
+    const chunkStart = Number(range.replace(/\D/g, ''));
+    const chunkEnd = Math.min(chunkStart + CHUNK_SIZE, fileSize - 1);
+
+    const contentLength = chunkEnd - chunkStart + 1;
+    const headers = {
+        'Content-Range': `bytes ${chunkStart}-${chunkEnd}/${fileSize}`,
+        'Accept-Ranges': 'bytes',
+        'Content-Length': contentLength,
+        'Content-Type': `video/${video.extension}`,
+        // "Cross-Origin-Resource-Policy": "cross-origin",
+    };
+
+    res.writeHead(StatusCodes.PARTIAL_CONTENT, headers);
+
+    const stream = fs.createReadStream(filePath, {
+        start: chunkStart,
+        end: chunkEnd,
+    });
+
+    stream.pipe(res);
+};
+
+export const updateVideoHandler = asyncHandler<
     UpdateVideoParams,
     {},
     UpdateVideoBody
@@ -111,7 +157,7 @@ export const updateVideoHandler = expressAsyncHandler<
     });
 });
 
-export const findVideosHandler = expressAsyncHandler(async (req, res, next) => {
+export const findVideosHandler = asyncHandler(async (req, res, next) => {
     const { query } = req;
 
     const videos = await getVideos(query);
@@ -122,7 +168,7 @@ export const findVideosHandler = expressAsyncHandler(async (req, res, next) => {
     });
 });
 
-export const deleteVideoHandler = expressAsyncHandler<UpdateVideoParams>(
+export const deleteVideoHandler = asyncHandler<UpdateVideoParams>(
     async (req, res, next) => {
         const { videoId } = req.params;
         const { _id: userId } = res.locals.user;
