@@ -1,3 +1,4 @@
+import ApiFeatures from '../../utils/apiFeatures';
 import { Video, VideoModel } from './video.model';
 
 export const createVideo = ({ owner }: { owner: string }) =>
@@ -8,10 +9,17 @@ export const createVideo = ({ owner }: { owner: string }) =>
 export const findVideo = (videoId: Video['videoId']) =>
     VideoModel.findOne({ videoId });
 
-export const getVideos = () =>
-    VideoModel.find({
-        published: true,
-    }).lean();
+export const getVideos = (query: object) =>
+    new ApiFeatures(
+        VideoModel.find({
+            published: true,
+        }),
+        query
+    )
+        .filter()
+        .sort()
+        .limitFields()
+        .paginate().query;
 
 // export const updateVideo = (videoId: string, body: any) =>
 //     VideoModel.findOneAndUpdate({ videoId }, body, { new: true });

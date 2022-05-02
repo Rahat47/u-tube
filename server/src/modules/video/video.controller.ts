@@ -1,4 +1,4 @@
-import fs from 'fs';
+import fs from 'fs-extra';
 import busboy from 'busboy';
 import { RequestHandler } from 'express';
 import { StatusCodes } from 'http-status-codes';
@@ -112,7 +112,9 @@ export const updateVideoHandler = expressAsyncHandler<
 });
 
 export const findVideosHandler = expressAsyncHandler(async (req, res, next) => {
-    const videos = await getVideos();
+    const { query } = req;
+
+    const videos = await getVideos(query);
 
     res.status(StatusCodes.OK).json({
         message: 'Videos found successfully',
@@ -145,25 +147,46 @@ export const deleteVideoHandler = expressAsyncHandler<UpdateVideoParams>(
             extension: video.extension,
         });
 
-        fs.unlink(filePath, async (err) => {
-            if (err) {
-                logger.error(err);
-                return next(
-                    new AppError(
-                        'Error deleting video',
-                        StatusCodes.INTERNAL_SERVER_ERROR
-                    )
-                );
-            }
+        try {
+            await fs.unlink(filePath);
+            logger.info(`Video ${video.videoId} deleted from file system`);
 
-            // delete the video from the database
             await deleteVideo(video.videoId);
-            logger.info('Video deleted successfully');
+            logger.info(`Video ${video.videoId} deleted from database`);
 
             res.status(StatusCodes.OK).json({
                 message: 'Video deleted successfully',
                 data: null,
             });
-        });
+        } catch (error) {
+            logger.error(`Error deleting video ${video.videoId}`, error);
+            return next(
+                new AppError(
+                    'Error deleting video, please try again later',
+                    StatusCodes.INTERNAL_SERVER_ERROR
+                )
+            );
+        }
+
+        // fs.unlink(filePath, async (err) => {
+        //     if (err) {
+        //         logger.error(err);
+        //         return next(
+        //             new AppError(
+        //                 'Error deleting video',
+        //                 StatusCodes.INTERNAL_SERVER_ERROR
+        //             )
+        //         );
+        //     }
+
+        //     // delete the video from the database
+        //     await deleteVideo(video.videoId);
+        //     logger.info('Video deleted successfully');
+
+        //     res.status(StatusCodes.OK).json({
+        //         message: 'Video deleted successfully',
+        //         data: null,
+        //     });
+        // });
     }
 );
