@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { createStyles, Navbar } from '@mantine/core';
 import {
     BellRinging,
@@ -12,8 +14,6 @@ import {
     Scissors,
     Clock,
 } from 'tabler-icons-react';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
 
 const useStyles = createStyles((theme, _params, getRef) => {
     const icon = getRef('icon');

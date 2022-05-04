@@ -6,6 +6,7 @@ import LoadingBar, { LoadingBarRef } from 'react-top-loading-bar';
 import { NotificationsProvider } from '@mantine/notifications';
 import { AppPropsWithLayout } from '../types';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { UserContextProvider } from '../context/user';
 
 const client = new QueryClient();
 
@@ -51,11 +52,13 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
             >
                 <NotificationsProvider position='top-right'>
                     <QueryClientProvider client={client}>
-                        {getLayout(
-                            <main>
-                                <Component {...pageProps} />
-                            </main>
-                        )}
+                        <UserContextProvider>
+                            {getLayout(
+                                <main>
+                                    <Component {...pageProps} />
+                                </main>
+                            )}
+                        </UserContextProvider>
                     </QueryClientProvider>
                 </NotificationsProvider>
             </MantineProvider>

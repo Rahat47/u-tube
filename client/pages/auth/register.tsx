@@ -1,6 +1,8 @@
 import React from 'react';
 import Head from 'next/head';
+import { z } from 'zod';
 import { AxiosError } from 'axios';
+import { useMutation } from 'react-query';
 import {
     Button,
     Container,
@@ -13,9 +15,7 @@ import {
     Checkbox,
 } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
-import { z } from 'zod';
 
-import { useMutation } from 'react-query';
 import { registerUser } from '../../api';
 import { RegisterUserReturnType } from '../../types';
 import { showNotification, updateNotification } from '@mantine/notifications';

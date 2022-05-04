@@ -39,3 +39,37 @@ export type LoginUserReturnType = {
         user: RegisterUserReturnType['data'];
     };
 };
+
+export enum QueryKeys {
+    USER = 'user',
+    VIDEOS = 'videos',
+}
+
+export interface User {
+    _id: string;
+    username: string;
+    email: string;
+    createdAt: string;
+    updatedAt: string;
+}
+
+export interface Video {
+    _id: string;
+    title: string;
+    description: string;
+    published: boolean;
+    owner: string;
+    extension: string;
+    videoId: string;
+    createdAt: string;
+    updatedAt: string;
+}
+
+export interface UploadVideoReturnType {
+    _id: string;
+    owner: string;
+    extension: string;
+    videoId: string;
+    createdAt: string;
+    updatedAt: string;
+}

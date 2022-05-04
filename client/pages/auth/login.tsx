@@ -1,3 +1,9 @@
+import Link from 'next/link';
+import { AxiosError } from 'axios';
+import { useRouter } from 'next/router';
+import { useMutation } from 'react-query';
+import { useForm } from '@mantine/form';
+import { showNotification, updateNotification } from '@mantine/notifications';
 import {
     TextInput,
     PasswordInput,
@@ -10,12 +16,6 @@ import {
     Group,
     Button,
 } from '@mantine/core';
-import { useForm } from '@mantine/form';
-import { showNotification, updateNotification } from '@mantine/notifications';
-import { AxiosError } from 'axios';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-import { useMutation } from 'react-query';
 import { loginUser } from '../../api';
 import { LoginUserReturnType } from '../../types';
 
@@ -46,7 +46,7 @@ function LoginPage() {
             updateNotification({
                 id: 'login-user',
                 title: 'Logged in',
-                message: 'You are now logged in',
+                message: 'You are now logged in, welcome to UTube!',
             });
             router.push('/');
         },
