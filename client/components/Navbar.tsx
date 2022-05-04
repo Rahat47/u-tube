@@ -122,7 +122,7 @@ export function NavbarComp() {
             <Navbar.Section grow>{userLinks}</Navbar.Section>
 
             <Navbar.Section className={classes.footer}>
-                <Link href='/settings'>
+                <Link href='/auth/login'>
                     <a className={classes.link}>
                         <SwitchHorizontal className={classes.linkIcon} />
                         <span>Change account</span>

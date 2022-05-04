@@ -11,5 +11,8 @@ export const registerUserHandler = expressAsyncHandler<
     const { username, email, password } = req.body;
 
     const user = await createUser({ username, email, password });
-    res.status(StatusCodes.CREATED).send(user);
+    res.status(StatusCodes.CREATED).json({
+        message: 'User created successfully',
+        data: user,
+    });
 });

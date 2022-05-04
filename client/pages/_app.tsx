@@ -1,10 +1,13 @@
-import { MantineProvider } from '@mantine/core';
+import { useRef } from 'react';
 import Head from 'next/head';
+import Router from 'next/router';
+import { MantineProvider } from '@mantine/core';
+import LoadingBar, { LoadingBarRef } from 'react-top-loading-bar';
 import { NotificationsProvider } from '@mantine/notifications';
 import { AppPropsWithLayout } from '../types';
-import LoadingBar, { LoadingBarRef } from 'react-top-loading-bar';
-import { useRef } from 'react';
-import Router from 'next/router';
+import { QueryClient, QueryClientProvider } from 'react-query';
+
+const client = new QueryClient();
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
     const getLayout = Component.getLayout || (page => page);
@@ -46,12 +49,14 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
                     colorScheme: 'dark',
                 }}
             >
-                <NotificationsProvider>
-                    {getLayout(
-                        <main>
-                            <Component {...pageProps} />
-                        </main>
-                    )}
+                <NotificationsProvider position='top-right'>
+                    <QueryClientProvider client={client}>
+                        {getLayout(
+                            <main>
+                                <Component {...pageProps} />
+                            </main>
+                        )}
+                    </QueryClientProvider>
                 </NotificationsProvider>
             </MantineProvider>
         </>
