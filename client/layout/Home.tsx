@@ -12,6 +12,7 @@ import { ReactNode } from 'react';
 import { NavbarComp } from '../components/Navbar';
 import UploadVideo from '../components/UploadVideo';
 import { useMe } from '../context/user';
+import { VideoContextProvider } from '../context/videos';
 
 const useStyles = createStyles(() => ({
     flex: {
@@ -30,42 +31,44 @@ const HomePageLayout = ({ children }: { children: ReactNode }) => {
     const { user, refetch } = useMe();
 
     return (
-        <AppShell
-            padding='md'
-            navbar={<NavbarComp />}
-            header={
-                <Header height={80} p='xs'>
-                    <Box className={classes.flex}>
-                        <Box className={classes.imageBox}>
-                            <Image
-                                src='/logo.png'
-                                alt='logo'
-                                width={100}
-                                height={40}
-                            />
-                        </Box>
-                        {!user && (
-                            <>
-                                <Link href='/auth/login' passHref>
-                                    <Anchor ml='lg' mr='lg'>
-                                        Login
-                                    </Anchor>
-                                </Link>
-                                <Link href='/auth/register' passHref>
-                                    <Anchor ml='lg' color='primary'>
-                                        Register
-                                    </Anchor>
-                                </Link>
-                            </>
-                        )}
+        <VideoContextProvider>
+            <AppShell
+                padding='md'
+                navbar={<NavbarComp />}
+                header={
+                    <Header height={80} p='xs'>
+                        <Box className={classes.flex}>
+                            <Box className={classes.imageBox}>
+                                <Image
+                                    src='/logo.png'
+                                    alt='logo'
+                                    width={100}
+                                    height={40}
+                                />
+                            </Box>
+                            {!user && (
+                                <>
+                                    <Link href='/auth/login' passHref>
+                                        <Anchor ml='lg' mr='lg'>
+                                            Login
+                                        </Anchor>
+                                    </Link>
+                                    <Link href='/auth/register' passHref>
+                                        <Anchor ml='lg' color='primary'>
+                                            Register
+                                        </Anchor>
+                                    </Link>
+                                </>
+                            )}
 
-                        {user && <UploadVideo />}
-                    </Box>
-                </Header>
-            }
-        >
-            {children}
-        </AppShell>
+                            {user && <UploadVideo />}
+                        </Box>
+                    </Header>
+                }
+            >
+                {children}
+            </AppShell>
+        </VideoContextProvider>
     );
 };
 

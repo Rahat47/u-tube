@@ -1,9 +1,17 @@
-import { Button, Stack, Switch, Textarea, TextInput } from '@mantine/core';
+import {
+    Button,
+    Checkbox,
+    Stack,
+    Switch,
+    Textarea,
+    TextInput,
+} from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { AxiosError } from 'axios';
 import type { Dispatch, FC, SetStateAction } from 'react';
 import { useMutation } from 'react-query';
 import { updateVideo } from '../api';
+import { useVideo } from '../context/videos';
 import { UpdateVideoReturnType } from '../types';
 
 interface Props {
@@ -12,6 +20,8 @@ interface Props {
 }
 
 const EditVideoForm: FC<Props> = ({ videoId, setOpened }) => {
+    const { refetch } = useVideo();
+
     const form = useForm({
         initialValues: {
             title: '',
@@ -27,6 +37,7 @@ const EditVideoForm: FC<Props> = ({ videoId, setOpened }) => {
     >(updateVideo, {
         onSuccess: () => {
             setOpened(false);
+            refetch();
         },
     });
 
@@ -51,7 +62,7 @@ const EditVideoForm: FC<Props> = ({ videoId, setOpened }) => {
                     {...form.getInputProps('description')}
                 />
 
-                <Switch
+                <Checkbox
                     label='Published'
                     {...form.getInputProps('published')}
                 />

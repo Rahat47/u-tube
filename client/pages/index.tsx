@@ -1,9 +1,10 @@
+import { useVideo } from '../context/videos';
 import HomePageLayout from '../layout/Home';
 
-import styles from '../styles/Home.module.css';
-
 const Home = () => {
-    return <div className={styles.container}></div>;
+    const { videos, refetch } = useVideo();
+
+    return <div>{JSON.stringify(videos)} </div>;
 };
 
 Home.getLayout = function (page: React.ReactNode) {

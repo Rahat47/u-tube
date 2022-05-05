@@ -7,6 +7,7 @@ import {
     UpdateVideoPayload,
     UpdateVideoReturnType,
     UploadVideoReturnType,
+    Video,
 } from '../types';
 
 const base = process.env.NEXT_PUBLIC_API_ENDPOINT;
@@ -70,5 +71,12 @@ export const updateVideo = async ({
         }
     );
 
+    return res.data;
+};
+
+export const getVideos = async () => {
+    const res = await axios.get<Video[]>(`${videoBase}`, {
+        withCredentials: true,
+    });
     return res.data;
 };
