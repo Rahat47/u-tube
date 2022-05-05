@@ -86,3 +86,8 @@ export interface UpdateVideoReturnType {
     message: string;
     data: Video;
 }
+
+export interface GetVideosReturnType {
+    message: string;
+    data: Video[];
+}

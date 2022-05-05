@@ -7,13 +7,13 @@ import {
     useQuery,
 } from 'react-query';
 import { getVideos } from '../api';
-import { QueryKeys, Video } from '../types';
+import { GetVideosReturnType, QueryKeys, Video } from '../types';
 
 interface VideoContextType {
     videos: Video[] | undefined;
     refetch: <TPageData>(
         options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
-    ) => Promise<QueryObserverResult<Video[], unknown>> | undefined;
+    ) => Promise<QueryObserverResult<GetVideosReturnType, unknown>>;
 }
 
 //@ts-ignore
@@ -25,7 +25,7 @@ const VideoContextProvider = ({ children }: { children: ReactNode }) => {
     return (
         <VideoContext.Provider
             value={{
-                videos: data,
+                videos: data?.data,
                 refetch,
             }}
         >

@@ -1,5 +1,6 @@
 import axios from 'axios';
 import {
+    GetVideosReturnType,
     LoginUserReturnType,
     LoginUserType,
     RegisterUserReturnType,
@@ -75,7 +76,7 @@ export const updateVideo = async ({
 };
 
 export const getVideos = async () => {
-    const res = await axios.get<Video[]>(`${videoBase}`, {
+    const res = await axios.get<GetVideosReturnType>(`${videoBase}`, {
         withCredentials: true,
     });
     return res.data;
