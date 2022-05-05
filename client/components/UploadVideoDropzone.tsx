@@ -69,7 +69,6 @@ function UploadVideoDropzone({
     };
 
     const upload = (files: File[]) => {
-        console.log(files);
         const formData = new FormData();
 
         files.forEach(file => {

@@ -1,11 +1,4 @@
-import {
-    Anchor,
-    AppShell,
-    Box,
-    createStyles,
-    Header,
-    Navbar,
-} from '@mantine/core';
+import { Anchor, AppShell, Box, createStyles, Header } from '@mantine/core';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ReactNode } from 'react';
@@ -28,7 +21,7 @@ const useStyles = createStyles(() => ({
 
 const HomePageLayout = ({ children }: { children: ReactNode }) => {
     const { classes } = useStyles();
-    const { user, refetch } = useMe();
+    const { user } = useMe();
 
     return (
         <VideoContextProvider>
