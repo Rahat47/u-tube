@@ -63,6 +63,7 @@ export interface Video {
     videoId: string;
     createdAt: string;
     updatedAt: string;
+    __v: number;
 }
 
 export interface UploadVideoReturnType {
@@ -72,4 +73,16 @@ export interface UploadVideoReturnType {
     videoId: string;
     createdAt: string;
     updatedAt: string;
+}
+
+export interface UpdateVideoPayload {
+    videoId: string;
+    title: string;
+    description: string;
+    published: boolean;
+}
+
+export interface UpdateVideoReturnType {
+    message: string;
+    data: Video;
 }

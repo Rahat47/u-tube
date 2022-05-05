@@ -26,7 +26,7 @@ const UploadVideo = () => {
                 overlayOpacity={0.55}
                 overlayBlur={3}
             >
-                <UploadVideoDropzone />
+                <UploadVideoDropzone setOpened={setOpened} />
             </Modal>
 
             <Button onClick={() => setOpened(true)}>Upload Video</Button>

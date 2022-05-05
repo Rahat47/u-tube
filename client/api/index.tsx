@@ -4,6 +4,8 @@ import {
     LoginUserType,
     RegisterUserReturnType,
     RegisterUserType,
+    UpdateVideoPayload,
+    UpdateVideoReturnType,
     UploadVideoReturnType,
 } from '../types';
 
@@ -53,5 +55,20 @@ export const uploadVideo = async ({
             'Content-Type': 'multipart/form-data',
         },
     });
+    return res.data;
+};
+
+export const updateVideo = async ({
+    videoId,
+    ...payload
+}: UpdateVideoPayload) => {
+    const res = await axios.patch<UpdateVideoReturnType>(
+        `${videoBase}/${videoId}`,
+        payload,
+        {
+            withCredentials: true,
+        }
+    );
+
     return res.data;
 };

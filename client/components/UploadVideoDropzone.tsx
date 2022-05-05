@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { Dispatch, SetStateAction, useRef, useState } from 'react';
 import {
     Text,
     Group,
@@ -12,6 +12,7 @@ import { Dropzone, DropzoneStatus, MIME_TYPES } from '@mantine/dropzone';
 import { CloudUpload } from 'tabler-icons-react';
 import { useMutation } from 'react-query';
 import { uploadVideo } from '../api';
+import EditVideoForm from './EditVideoForm';
 
 const useStyles = createStyles(theme => ({
     wrapper: {
@@ -49,7 +50,11 @@ function getActiveColor(status: DropzoneStatus, theme: MantineTheme) {
         : theme.black;
 }
 
-function UploadVideoDropzone() {
+function UploadVideoDropzone({
+    setOpened,
+}: {
+    setOpened: Dispatch<SetStateAction<boolean>>;
+}) {
     const [progress, setProgress] = useState(0);
     const theme = useMantineTheme();
     const { classes } = useStyles();
@@ -75,67 +80,82 @@ function UploadVideoDropzone() {
     };
 
     return (
-        <div className={classes.wrapper}>
-            <Dropzone
-                //@ts-ignore
-                openRef={openRef}
-                onDrop={upload}
-                className={classes.dropzone}
-                radius='md'
-                accept={[MIME_TYPES.mp4]}
-                multiple={false}
-                // disabled={mutation.status === 'loading'}
-                // loading={mutation.status === 'loading'}
-                // loading
-            >
-                {status => (
-                    <div style={{ pointerEvents: 'none' }}>
-                        <Group position='center'>
-                            <CloudUpload
-                                size={50}
-                                color={getActiveColor(status, theme)}
-                            />
-                        </Group>
-                        <Text
-                            align='center'
-                            weight={700}
-                            size='lg'
-                            mt='xl'
-                            sx={{ color: getActiveColor(status, theme) }}
-                        >
-                            {status.accepted
-                                ? 'Drop files here'
-                                : status.rejected
-                                ? 'Invalid file type, please upload .mp4'
-                                : 'Upload Video'}
-                        </Text>
-                        <Text align='center' size='sm' mt='xs' color='dimmed'>
-                            Drag&apos;n&apos;drop videos here to upload. We can
-                            accept only <i>.mp4</i> formats.
-                        </Text>
+        <>
+            <div className={classes.wrapper}>
+                <Dropzone
+                    //@ts-ignore
+                    openRef={openRef}
+                    onDrop={upload}
+                    className={classes.dropzone}
+                    radius='md'
+                    accept={[MIME_TYPES.mp4]}
+                    multiple={false}
+                    disabled={mutation.isSuccess}
+                    // loading={mutation.status === 'loading'}
+                    // loading
+                >
+                    {status => (
+                        <div style={{ pointerEvents: 'none' }}>
+                            <Group position='center'>
+                                <CloudUpload
+                                    size={50}
+                                    color={getActiveColor(status, theme)}
+                                />
+                            </Group>
+                            <Text
+                                align='center'
+                                weight={700}
+                                size='lg'
+                                mt='xl'
+                                sx={{ color: getActiveColor(status, theme) }}
+                            >
+                                {status.accepted
+                                    ? 'Drop files here'
+                                    : status.rejected
+                                    ? 'Invalid file type, please upload .mp4'
+                                    : 'Upload Video'}
+                            </Text>
+                            <Text
+                                align='center'
+                                size='sm'
+                                mt='xs'
+                                color='dimmed'
+                            >
+                                Drag&apos;n&apos;drop videos here to upload. We
+                                can accept only <i>.mp4</i> formats.
+                            </Text>
 
-                        {progress > 0 && (
-                            <Progress
-                                mt={20}
-                                value={progress}
-                                size='xl'
-                                label={`${progress}%`}
-                            />
-                        )}
-                    </div>
-                )}
-            </Dropzone>
+                            {progress > 0 && (
+                                <Progress
+                                    mt={20}
+                                    value={progress}
+                                    size='xl'
+                                    label={`${progress}%`}
+                                />
+                            )}
+                        </div>
+                    )}
+                </Dropzone>
 
-            <Button
-                className={classes.control}
-                size='md'
-                radius='xl'
-                onClick={() => openRef.current?.()}
-                loading={mutation.status === 'loading'}
-            >
-                Select Videos
-            </Button>
-        </div>
+                <Button
+                    className={classes.control}
+                    size='md'
+                    radius='xl'
+                    onClick={() => openRef.current?.()}
+                    loading={mutation.status === 'loading'}
+                    disabled={mutation.isSuccess}
+                >
+                    Select Videos
+                </Button>
+            </div>
+
+            {mutation.data && (
+                <EditVideoForm
+                    setOpened={setOpened}
+                    videoId={mutation.data.videoId}
+                />
+            )}
+        </>
     );
 }
 
