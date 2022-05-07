@@ -213,26 +213,5 @@ export const deleteVideoHandler = asyncHandler<UpdateVideoParams>(
                 )
             );
         }
-
-        // fs.unlink(filePath, async (err) => {
-        //     if (err) {
-        //         logger.error(err);
-        //         return next(
-        //             new AppError(
-        //                 'Error deleting video',
-        //                 StatusCodes.INTERNAL_SERVER_ERROR
-        //             )
-        //         );
-        //     }
-
-        //     // delete the video from the database
-        //     await deleteVideo(video.videoId);
-        //     logger.info('Video deleted successfully');
-
-        //     res.status(StatusCodes.OK).json({
-        //         message: 'Video deleted successfully',
-        //         data: null,
-        //     });
-        // });
     }
 );

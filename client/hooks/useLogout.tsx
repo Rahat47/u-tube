@@ -3,13 +3,11 @@ import { useModals } from '@mantine/modals';
 import { showNotification, updateNotification } from '@mantine/notifications';
 import { logoutHandler } from '../api';
 import { useMe } from '../context/user';
-import { useVideo } from '../context/videos';
 
 export const useLogout = () => {
     const modals = useModals();
     const theme = useMantineTheme();
     const { refetch } = useMe();
-    const { refetch: videoRefetch } = useVideo();
 
     const logout = () =>
         modals.openConfirmModal({
@@ -42,7 +40,6 @@ export const useLogout = () => {
                 });
 
                 refetch();
-                videoRefetch();
             },
         });
 
