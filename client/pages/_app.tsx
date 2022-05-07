@@ -2,10 +2,11 @@ import { useRef } from 'react';
 import Head from 'next/head';
 import Router from 'next/router';
 import { MantineProvider } from '@mantine/core';
+import { ModalsProvider } from '@mantine/modals';
 import LoadingBar, { LoadingBarRef } from 'react-top-loading-bar';
 import { NotificationsProvider } from '@mantine/notifications';
-import { AppPropsWithLayout } from '../types';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { AppPropsWithLayout } from '../types';
 import { UserContextProvider } from '../context/user';
 
 const client = new QueryClient();
@@ -50,17 +51,19 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
                     colorScheme: 'dark',
                 }}
             >
-                <NotificationsProvider position='top-right'>
-                    <QueryClientProvider client={client}>
-                        <UserContextProvider>
-                            {getLayout(
-                                <main>
-                                    <Component {...pageProps} />
-                                </main>
-                            )}
-                        </UserContextProvider>
-                    </QueryClientProvider>
-                </NotificationsProvider>
+                <ModalsProvider>
+                    <NotificationsProvider position='top-right'>
+                        <QueryClientProvider client={client}>
+                            <UserContextProvider>
+                                {getLayout(
+                                    <main>
+                                        <Component {...pageProps} />
+                                    </main>
+                                )}
+                            </UserContextProvider>
+                        </QueryClientProvider>
+                    </NotificationsProvider>
+                </ModalsProvider>
             </MantineProvider>
         </>
     );

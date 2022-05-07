@@ -8,13 +8,13 @@ import {
     UpdateVideoPayload,
     UpdateVideoReturnType,
     UploadVideoReturnType,
-    Video,
 } from '../types';
 
 const base = process.env.NEXT_PUBLIC_API_ENDPOINT;
 
 const userBase = `${base}/api/v1/users`;
 const videoBase = `${base}/api/v1/videos`;
+const authBase = `${base}/api/v1/auth`;
 
 export const registerUser = async (payload: RegisterUserType) => {
     const res = await axios.post<RegisterUserReturnType>(userBase, payload);
@@ -22,11 +22,9 @@ export const registerUser = async (payload: RegisterUserType) => {
 };
 
 export const loginUser = async (payload: LoginUserType) => {
-    const res = await axios.post<LoginUserReturnType>(
-        `${base}/api/v1/auth`,
-        payload,
-        { withCredentials: true }
-    );
+    const res = await axios.post<LoginUserReturnType>(authBase, payload, {
+        withCredentials: true,
+    });
     return res.data;
 };
 
@@ -79,5 +77,13 @@ export const getVideos = async () => {
     const res = await axios.get<GetVideosReturnType>(`${videoBase}`, {
         withCredentials: true,
     });
+    return res.data;
+};
+
+export const logoutHandler = async () => {
+    const res = await axios.post(`${authBase}/logout`, null, {
+        withCredentials: true,
+    });
+
     return res.data;
 };

@@ -90,8 +90,6 @@ function UploadVideoDropzone({
                     accept={[MIME_TYPES.mp4]}
                     multiple={false}
                     disabled={mutation.isSuccess}
-                    // loading={mutation.status === 'loading'}
-                    // loading
                 >
                     {status => (
                         <div style={{ pointerEvents: 'none' }}>

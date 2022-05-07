@@ -50,3 +50,15 @@ export const loginHandler = expressAsyncHandler<{}, {}, LoginSchema>(
         });
     }
 );
+
+export const logoutHandler = expressAsyncHandler(async (req, res) => {
+    res.clearCookie('accessToken', {
+        domain: process.env.COOKIE_DOMAIN || 'localhost',
+        path: '/',
+    });
+
+    res.status(StatusCodes.OK).json({
+        message: 'Logout successful',
+        data: null,
+    });
+});
